@@ -1,5 +1,5 @@
 # Progressive Image Loader
-Made working at <img src="https://nalarocks.com/assets/images/logo-nala@2x-min.png" style="width: 90px"/>
+Made working at <img src="https://nalarocks.com/assets/images/logo-nala@2x-min.png" width="90px"/>
 
 A beautiful effect to preload images, made with love &lt;3
 
