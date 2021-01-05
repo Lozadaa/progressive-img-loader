@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import clsx from 'clsx';
+import 'clsx';
 import { Animate } from 'react-simple-animate';
 
+var ERROR = "ERROR_LOADING_IMAGE";
 function loadImage(src, callback) {
   if (src) {
     var image = new Image();
@@ -14,52 +14,49 @@ function loadImage(src, callback) {
       }
     };
 
+    image.onerror = function () {
+      if (callback) {
+        callback(ERROR);
+      }
+    };
+
     image.src = src;
+    return;
   }
+
+  callback(ERROR);
 }
-
-var useStyles = makeStyles(function (theme) {
-  return {
-    defaultImageClass: {
-      width: "300px",
-      height: "300px"
-    }
-  };
-});
-
-var useStyles$1 = makeStyles(function (theme) {
-  return {
-    loading: {
-      filter: "blur(20px)"
-    }
-  };
-});
 
 var Image$1 = function Image(props) {
   var src = props.src,
       alt = props.alt,
       _props$transitionTime = props.transitionTime,
-      transitionTime = _props$transitionTime === void 0 ? 2 : _props$transitionTime,
+      transitionTime = _props$transitionTime === void 0 ? 1 : _props$transitionTime,
       className = props.className,
-      isPreview = props.isPreview;
-  var classes = useStyles$1();
-  var classPreview = isPreview ? classes.loading : '';
+      isPreview = props.isPreview,
+      CustomImageComponent = props.CustomImageComponent;
+  var transitionTimeError = 0;
   var filterWithBlur = {
     filter: 'blur(5px)'
   };
   var filterWithoutBlur = {
     filter: 'blur(0)'
   };
-  return /*#__PURE__*/React.createElement(Animate, {
+  var duration = src === ERROR ? transitionTimeError : transitionTime;
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Animate, {
     play: true,
-    duration: transitionTime,
+    duration: duration,
     start: filterWithBlur,
-    end: filterWithoutBlur
-  }, /*#__PURE__*/React.createElement("img", {
+    end: isPreview ? filterWithBlur : filterWithoutBlur
+  }, CustomImageComponent && /*#__PURE__*/React.createElement(CustomImageComponent, {
     src: src,
     alt: alt,
-    className: clsx(classPreview, className)
-  }));
+    className: className
+  }), !CustomImageComponent && /*#__PURE__*/React.createElement("img", {
+    src: src,
+    alt: alt,
+    className: className
+  })));
 };
 
 var ImageLoader = function ImageLoader(props) {
@@ -67,7 +64,8 @@ var ImageLoader = function ImageLoader(props) {
       srcPreview = props.srcPreview,
       alt = props.alt,
       loader = props.loader,
-      className = props.className;
+      className = props.className,
+      customImageComponent = props.customImageComponent;
 
   var _useState = useState(null),
       originalImage = _useState[0],
@@ -77,7 +75,6 @@ var ImageLoader = function ImageLoader(props) {
       previewImage = _useState2[0],
       setPreviewImage = _useState2[1];
 
-  var classes = useStyles();
   useEffect(function () {
     if (!previewImage) {
       loadImage(srcPreview, function (src) {
@@ -93,20 +90,22 @@ var ImageLoader = function ImageLoader(props) {
   }, []);
   var isPreloader = !previewImage && !originalImage && loader;
   var isPossibleLoadThumbnail = previewImage && !originalImage;
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Loader"), isPreloader && loader, isPossibleLoadThumbnail && /*#__PURE__*/React.createElement(Image$1, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, isPreloader && loader, isPossibleLoadThumbnail && /*#__PURE__*/React.createElement(Image$1, {
     alt: alt,
     src: previewImage,
     isPreview: true,
-    className: className ? className : classes.defaultImageClass
+    CustomImageComponent: customImageComponent,
+    className: className
   }), originalImage && /*#__PURE__*/React.createElement(Image$1, {
     alt: alt,
     src: originalImage,
     isPreview: false,
-    className: className ? className : classes.defaultImageClass
+    CustomImageComponent: customImageComponent,
+    className: className
   }));
 };
 ImageLoader.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   srcPreview: PropTypes.string,
   loader: PropTypes.element,
   alt: PropTypes.string,

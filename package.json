@@ -1,6 +1,6 @@
 {
-  "name": "progressive-img-loader",
-  "version": "1.0.0",
+  "name": "react-progressive-img-loader",
+  "version": "1.0.7",
   "description": "A beautiful effect to preload images, made with love &lt;3",
   "author": "Lozadaa",
   "license": "MIT",

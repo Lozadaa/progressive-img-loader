@@ -1,24 +1,39 @@
-import React, {useEffect, useState} from "react";
-import PropTypes from "prop-types";
-import { useStyles } from "./styles";
+import React from "react";
 import clsx from "clsx";
 import {Animate} from "react-simple-animate";
+import {ERROR} from "../utils/Utils";
 
+/**
+ * Custom component to manage logic of the images :)
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export const Image = (props) => {
-  const {src, alt, transitionTime = 2, className, isPreview} = props;
-  const classes = useStyles();
-  const classPreview = isPreview ? classes.loading : '';
-  const filterWithBlur = {filter: 'blur(5px)' };
-  const filterWithoutBlur = {filter: 'blur(0)' };
+  const {src, alt, transitionTime = 1, className, isPreview, CustomImageComponent} = props;
+  const transitionTimeError = 0;
+  const filterWithBlur = {filter: 'blur(5px)'};
+  const filterWithoutBlur = {filter: 'blur(0)'};
+  const duration = src === ERROR ? transitionTimeError : transitionTime;
   return (
-    <Animate
-      play={true}
-      duration={transitionTime}
-      start={filterWithBlur}
-      end={filterWithoutBlur}
-    >
-      <img src={src} alt={alt} className={clsx(classPreview, className)}/>
-    </Animate>);
+    <React.Fragment>
+      <Animate
+        play={true}
+        duration={duration}
+        start={filterWithBlur}
+        // if is a preview image we don't wanna remove the blur effect
+        end={isPreview ? filterWithBlur : filterWithoutBlur}
+      >
+        { // With their image component
+          CustomImageComponent && <CustomImageComponent src={src} alt={alt} className={className}/>
+        }
+        { // With our image component
+          !CustomImageComponent && <img src={src} alt={alt} className={className}/>
+        }
+      </Animate>
+    </React.Fragment>
+  );
+
 }
 
 

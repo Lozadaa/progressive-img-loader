@@ -1,14 +1,20 @@
 import React, {useEffect, useState} from "react";
 import * as Utils from "./utils/Utils.js"
 import PropTypes from "prop-types";
-import { useStyles } from "./styles";
+
 import {Image} from "./components/Image.jsx";
 
+/**
+ * The awesome, magic, beautiful (😛) element that preload blurred your thumb images and then load the
+ * original quality image with transition effect to show it!
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export const ImageLoader = (props) => {
-  const { src, srcPreview, alt, loader, className } = props;
+  const { src, srcPreview, alt, loader, className, customImageComponent } = props;
   const [originalImage, setOriginalImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  const classes = useStyles();
   useEffect(() => {
     if(!previewImage){
       Utils.loadImage(srcPreview, (src) => setPreviewImage(src));
@@ -24,17 +30,26 @@ export const ImageLoader = (props) => {
 
   return (
     <React.Fragment>
-      <h1>Loader</h1>
         { isPreloader && loader }
-        { isPossibleLoadThumbnail && <Image alt={alt} src={previewImage} isPreview={true} className={className ? className : classes.defaultImageClass} /> }
-        { originalImage && <Image alt={alt} src={originalImage} isPreview={false} className={className ? className : classes.defaultImageClass} /> }
+        { isPossibleLoadThumbnail && <Image alt={alt}
+                                            src={previewImage}
+                                            isPreview={true}
+                                            CustomImageComponent={customImageComponent}
+                                            className={className}
+        /> }
+        { originalImage && <Image alt={alt}
+                                  src={originalImage}
+                                  isPreview={false}
+                                  CustomImageComponent={customImageComponent}
+                                  className={className}
+        /> }
     </React.Fragment>
   );
 
 }
 
 ImageLoader.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   srcPreview: PropTypes.string,
   loader: PropTypes.element,
   alt: PropTypes.string,
