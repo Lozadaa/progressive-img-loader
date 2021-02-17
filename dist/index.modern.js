@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import 'clsx';
 import { Animate } from 'react-simple-animate';
+import { useIsMounted } from 'react-tidy';
+import defaultImg from './default~stYjkWMJ.png';
 
 var ERROR = "ERROR_LOADING_IMAGE";
 function loadImage(src, callback) {
@@ -75,22 +76,28 @@ var ImageLoader = function ImageLoader(props) {
       previewImage = _useState2[0],
       setPreviewImage = _useState2[1];
 
+  var isMounted = useIsMounted();
   useEffect(function () {
-    if (!previewImage) {
-      loadImage(srcPreview, function (src) {
-        return setPreviewImage(src);
-      });
-    }
+    if (isMounted) {
+      if (!previewImage) {
+        loadImage(srcPreview, function (src) {
+          return setPreviewImage(src);
+        });
+      }
 
-    if (!originalImage) {
-      loadImage(src, function (src) {
-        return setOriginalImage(src);
-      });
+      if (!originalImage) {
+        loadImage(src, function (src) {
+          return setOriginalImage(src);
+        });
+      }
     }
   }, []);
-  var isPreloader = !previewImage && !originalImage && loader;
+  var isLoading = !previewImage && !originalImage && !loader;
+  var isLoadingWithPreloader = !previewImage && !originalImage && loader;
   var isPossibleLoadThumbnail = previewImage && !originalImage;
-  return /*#__PURE__*/React.createElement(React.Fragment, null, isPreloader && loader, isPossibleLoadThumbnail && /*#__PURE__*/React.createElement(Image$1, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, isLoadingWithPreloader && loader, isLoading && /*#__PURE__*/React.createElement("customImageComponent", {
+    src: defaultImg
+  }), isPossibleLoadThumbnail && /*#__PURE__*/React.createElement(Image$1, {
     alt: alt,
     src: previewImage,
     isPreview: true,

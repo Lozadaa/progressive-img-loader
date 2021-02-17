@@ -3,8 +3,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var React = require('react');
 var React__default = _interopDefault(React);
 var PropTypes = _interopDefault(require('prop-types'));
-require('clsx');
 var reactSimpleAnimate = require('react-simple-animate');
+var reactTidy = require('react-tidy');
+var defaultImg = _interopDefault(require('./default~stYjkWMJ.png'));
 
 var ERROR = "ERROR_LOADING_IMAGE";
 function loadImage(src, callback) {
@@ -78,22 +79,28 @@ var ImageLoader = function ImageLoader(props) {
       previewImage = _useState2[0],
       setPreviewImage = _useState2[1];
 
+  var isMounted = reactTidy.useIsMounted();
   React.useEffect(function () {
-    if (!previewImage) {
-      loadImage(srcPreview, function (src) {
-        return setPreviewImage(src);
-      });
-    }
+    if (isMounted) {
+      if (!previewImage) {
+        loadImage(srcPreview, function (src) {
+          return setPreviewImage(src);
+        });
+      }
 
-    if (!originalImage) {
-      loadImage(src, function (src) {
-        return setOriginalImage(src);
-      });
+      if (!originalImage) {
+        loadImage(src, function (src) {
+          return setOriginalImage(src);
+        });
+      }
     }
   }, []);
-  var isPreloader = !previewImage && !originalImage && loader;
+  var isLoading = !previewImage && !originalImage && !loader;
+  var isLoadingWithPreloader = !previewImage && !originalImage && loader;
   var isPossibleLoadThumbnail = previewImage && !originalImage;
-  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, isPreloader && loader, isPossibleLoadThumbnail && /*#__PURE__*/React__default.createElement(Image$1, {
+  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, isLoadingWithPreloader && loader, isLoading && /*#__PURE__*/React__default.createElement("customImageComponent", {
+    src: defaultImg
+  }), isPossibleLoadThumbnail && /*#__PURE__*/React__default.createElement(Image$1, {
     alt: alt,
     src: previewImage,
     isPreview: true,
