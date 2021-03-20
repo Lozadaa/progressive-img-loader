@@ -20,7 +20,7 @@ export const ImageLoader = (props) => {
     alt,
     loader,
     className,
-    customImageComponent
+    customImageComponent: CustomImageComponent
   } = props
   const [originalImage, setOriginalImage] = useState(null)
   const [previewImage, setPreviewImage] = useState(null)
@@ -34,7 +34,7 @@ export const ImageLoader = (props) => {
         Utils.loadImage(src, (src) => setOriginalImage(src))
       }
     }
-  }, [])
+  }, [previewImage, originalImage])
 
   const isLoading = !previewImage && !originalImage && !loader
   const isLoadingWithPreloader = !previewImage && !originalImage && loader
@@ -43,13 +43,13 @@ export const ImageLoader = (props) => {
   return (
     <React.Fragment>
       {isLoadingWithPreloader && loader}
-      {isLoading && <customImageComponent src={defaultImg} />}
+      {isLoading && <CustomImageComponent src={defaultImg} />}
       {isPossibleLoadThumbnail && (
         <Image
           alt={alt}
           src={previewImage}
           isPreview
-          CustomImageComponent={customImageComponent}
+          CustomImageComponent={CustomImageComponent}
           className={className}
         />
       )}
@@ -58,7 +58,7 @@ export const ImageLoader = (props) => {
           alt={alt}
           src={originalImage}
           isPreview={false}
-          CustomImageComponent={customImageComponent}
+          CustomImageComponent={CustomImageComponent}
           className={className}
         />
       )}
